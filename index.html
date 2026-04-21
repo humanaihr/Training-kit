@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>TrainIQ — AI Training Kit Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+:root{
+  --bg:#f8f9fc;--bg2:#ffffff;--bg3:#f1f4f9;--bg4:#e8ecf3;
+  --blue:#4f7caa;--blue2:#3a6fa3;--blue3:#2d5f8a;
+  --white:#1e2533;--gray:#7a8499;--light:#4a5568;
+  --green:#2d8a6e;--amber:#c47c1a;--rose:#c0394f;
+  --border:rgba(45,95,138,.1);--border2:rgba(0,0,0,.07);
+  --sans:'Outfit',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;--r:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:#f0f3f8;border-right:1px solid rgba(0,0,0,.08);padding:22px 14px;display:flex;flex-direction:column;gap:3px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.s-logo{font-family:var(--mono);padding:4px 8px 18px;border-bottom:1px solid var(--border2);margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:600}
+.lmark{width:30px;height:30px;background:var(--blue3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:white;flex-shrink:0}
+.lmark span{color:var(--blue)}
+.nsec{font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(107,122,153,.45);padding:12px 8px 3px;font-family:var(--mono)}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);font-size:.84rem;font-weight:500;color:var(--gray);cursor:pointer;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.ni:hover{background:rgba(45,95,138,.07);color:var(--white)}
+.ni.active{background:rgba(45,95,138,.1);color:var(--blue3)}
+.sb-bot{margin-top:auto;padding-top:14px;border-top:1px solid var(--border2)}
+.ubanner{background:#eef3f9;border:1px solid rgba(45,95,138,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;text-align:center}
+.ubanner p{font-size:.75rem;color:var(--gray);margin-bottom:10px;line-height:1.5;font-family:var(--mono)}
+.ubanner strong{color:var(--white)}
+.ubtn{display:block;width:100%;padding:9px;background:var(--blue3);color:white;border:none;border-radius:var(--r);font-family:var(--mono);font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s}
+.ubtn:hover{background:var(--blue2)}
+.main{display:flex;flex-direction:column}
+.topbar{background:#ffffff;border-bottom:1px solid rgba(0,0,0,.08);padding:0 26px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.tbl{display:flex;align-items:center;gap:12px}
+.tbtitle{font-size:.88rem;font-weight:600;color:var(--white);font-family:var(--mono)}
+.tbr{display:flex;align-items:center;gap:8px}
+.ltog{display:flex;align-items:center;border:1px solid var(--border2);overflow:hidden;border-radius:4px;font-size:.68rem;font-weight:600;font-family:var(--mono)}
+.lbtn{padding:5px 9px;border:none;background:transparent;color:var(--gray);cursor:pointer;font-family:var(--mono);font-size:inherit;font-weight:inherit;transition:all .15s;line-height:1}
+.lbtn.active{background:#2d5f8a;color:white}
+.btn{padding:7px 16px;border-radius:var(--r);font-family:var(--sans);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-g{background:transparent;color:var(--gray);border:1px solid var(--border2)}
+.btn-g:hover{border-color:var(--blue3);color:var(--blue3)}
+.btn-p{background:var(--blue3);color:white}
+.btn-p:hover{background:var(--blue2);transform:translateY(-1px)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.content{padding:26px;flex:1}
+.view{display:none}.view.active{display:block}
+.ph{margin-bottom:22px}
+.ph h1{font-size:1.5rem;font-weight:800;margin-bottom:4px;letter-spacing:-.02em}
+.ph p{font-size:.84rem;color:var(--gray)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.fcard{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:22px}
+.fcard h3{font-size:.85rem;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border2);color:var(--light);font-family:var(--mono);letter-spacing:.04em}
+.fr{margin-bottom:14px}
+.fr label{display:block;font-size:.67rem;font-weight:600;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-family:var(--mono)}
+.fr input,.fr select,.fr textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:9px 12px;font-family:var(--sans);font-size:.875rem;color:var(--white);transition:border-color .15s;outline:none}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--blue3)}
+.fr textarea{resize:vertical;min-height:72px;line-height:1.6}
+.fr select option{background:var(--bg2)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lpills{display:flex;gap:6px;flex-wrap:wrap}
+.lp{padding:5px 13px;border-radius:100px;font-size:.75rem;font-weight:600;border:1.5px solid var(--border2);color:var(--gray);cursor:pointer;transition:all .15s;font-family:var(--mono)}
+.lp:hover{border-color:var(--blue3);color:var(--blue3)}
+.lp.active{background:rgba(45,95,138,.1);border-color:var(--blue3);color:var(--blue3)}
+.ferr{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:var(--r);padding:9px 13px;font-size:.8rem;color:#fb7185;margin-bottom:12px;display:none;font-family:var(--mono)}
+.ferr.show{display:block}
+/* Terminal */
+.terminal{background:#1a1f2e;border:1px solid rgba(96,165,250,.1);border-radius:10px;overflow:hidden}
+.tbar{background:#141928;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg{background:#28c840}
+.tlbl{font-family:var(--mono);font-size:.67rem;color:#5a7090;margin-left:8px}
+.tbody{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:260px}
+.trow{display:flex;gap:10px;align-items:flex-start;opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
+.trow.show{opacity:1;transform:translateY(0)}
+.tav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;flex-shrink:0;margin-top:2px;font-family:var(--mono)}
+.av-hr{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
+.av-ai{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.25)}
+.tbbl{flex:1;border-left:2px solid rgba(255,255,255,.06);padding:7px 11px}
+.tbbl.ai{border-left-color:var(--blue3)}.tbbl.hr{border-left-color:#f59e0b}
+.tblbl{font-family:var(--mono);font-size:.6rem;font-weight:600;margin-bottom:4px;letter-spacing:.04em}
+.tblbl.ai{color:#60a5fa}.tblbl.hr{color:#f59e0b}
+.tbtxt{font-size:.8rem;color:#c8d4e8;line-height:1.55;font-family:var(--mono)}
+.tchips{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.chip{padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:600;font-family:var(--mono)}
+.cb{background:rgba(96,165,250,.15);border:1px solid rgba(96,165,250,.3);color:#4070a0}
+.cg{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#34d399}
+.cy{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#fbbf24}
+.typing{display:flex;gap:3px;align-items:center;padding:3px 0}
+.typing span{width:4px;height:4px;border-radius:50%;background:var(--blue3);animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+/* AI Loading */
+.ail{display:none;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;gap:14px;text-align:center}
+.ail.show{display:flex}
+.aisp{width:40px;height:40px;border:2px solid rgba(45,95,138,.15);border-top-color:var(--blue3);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ail h3{font-size:1rem;font-weight:700;font-family:var(--mono)}
+.ail p{font-size:.8rem;color:var(--gray);font-family:var(--mono)}
+.aisteps{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.aistep{font-size:.76rem;color:var(--gray);display:flex;align-items:center;gap:7px;font-family:var(--mono)}
+.aistep.done{color:var(--blue3)}.aistep.active .stepd{background:var(--blue3);animation:pulse 1s infinite}.aistep.done .stepd{background:var(--blue3)}
+.stepd{width:5px;height:5px;border-radius:50%;background:var(--border2);flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+/* Result */
+.rcard{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.rhead{padding:16px 20px;border-bottom:1px solid var(--border2)}
+.rhead h3{font-size:.9rem;font-weight:700;color:var(--light);font-family:var(--mono);margin-bottom:10px}
+.dlrow{display:flex;gap:8px;flex-wrap:wrap}
+.dlbtn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:var(--r);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;border:none;text-decoration:none;font-family:var(--mono)}
+.dl-pptx{background:#fff5f5;border:1px solid rgba(185,90,90,.25);color:#9b4f4f}
+.dl-pptx:hover{background:#ffe8e8}
+.dl-word{background:#eff5fc;border:1px solid rgba(45,95,138,.2);color:#2d5f8a}
+.dl-word:hover{background:#deeaf6}
+.rbody{padding:18px 20px}
+.mpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.mp{background:#edf1f7;border:1px solid rgba(0,0,0,.07);border-radius:100px;padding:3px 10px;font-size:.68rem;font-weight:600;color:var(--gray);font-family:var(--mono)}
+/* Tabs */
+.rtabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:16px;overflow-x:auto}
+.rtab{padding:9px 18px;font-size:.8rem;font-weight:600;color:var(--gray);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.rtab:hover{color:var(--white)}
+.rtab.active{color:var(--blue3);border-bottom-color:var(--blue3)}
+.rtc{display:none}.rtc.active{display:block}
+/* Modules */
+.modcard{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;transition:border-color .15s}
+.modcard:hover{border-color:rgba(45,95,138,.2)}
+.modh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.modn{width:22px;height:22px;border-radius:50%;background:#2d5f8a;color:white;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono)}
+.modtitle{font-size:.875rem;font-weight:700;color:var(--white)}
+.moddur{font-size:.68rem;color:var(--blue3);font-family:var(--mono);font-weight:600;margin-left:auto}
+.objl{list-style:none;display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.objl li{font-size:.8rem;color:var(--light);display:flex;gap:7px;align-items:flex-start}
+.objl li::before{content:'→';color:var(--blue3);flex-shrink:0;font-family:var(--mono);font-size:.75rem;margin-top:1px}
+/* Exercises */
+.excard{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.exmod{font-size:.66rem;color:var(--gray);font-family:var(--mono);margin-bottom:8px;letter-spacing:.04em}
+.exh{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.exn{width:28px;height:28px;border-radius:6px;background:rgba(45,95,138,.12);border:1px solid rgba(45,95,138,.25);color:var(--blue3);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono)}
+.extitle{font-size:.92rem;font-weight:700;color:var(--white);flex:1}
+.extype{font-size:.66rem;font-weight:600;padding:2px 9px;background:rgba(45,95,138,.08);border:1px solid rgba(45,95,138,.15);border-radius:100px;color:var(--blue3);font-family:var(--mono);flex-shrink:0}
+.exdesc{font-size:.84rem;color:var(--light);line-height:1.7;margin-bottom:12px}
+.exobj{margin-bottom:12px}
+.exobj-lbl{font-size:.68rem;font-weight:600;color:var(--blue3);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.exobj ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.exobj ul li{font-size:.8rem;color:var(--light);display:flex;gap:7px;align-items:flex-start}
+.exobj ul li::before{content:'✓';color:#2d8a6e;flex-shrink:0;font-family:var(--mono)}
+.exsteps{margin-bottom:10px}
+.exsteps-lbl{font-size:.68rem;font-weight:600;color:#7a8499;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.exstep{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.exstepn{width:22px;height:22px;border-radius:50%;background:#dde3ed;color:#6b7a99;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono)}
+.exstept{font-size:.82rem;color:var(--light);line-height:1.55;padding-top:2px}
+.exdeliv{background:#f5f8fc;border:1px solid rgba(45,95,138,.12);border-radius:var(--r);padding:10px 13px}
+.exdeliv-lbl{font-size:.66rem;font-weight:600;color:var(--blue3);font-family:var(--mono);letter-spacing:.06em;margin-bottom:4px}
+.exdeliv p{font-size:.8rem;color:var(--light);line-height:1.55}
+/* Quiz */
+.qprog{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.qpbar{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.qpfill{height:100%;background:var(--blue3);border-radius:3px;transition:width .4s ease}
+.qptxt{font-size:.74rem;color:var(--gray);font-family:var(--mono);white-space:nowrap}
+.qcard{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:20px;margin-bottom:14px;display:none}
+.qcard.active{display:block}
+.qnum{font-size:.66rem;color:var(--blue);font-family:var(--mono);font-weight:600;margin-bottom:8px;letter-spacing:.08em}
+.qtext{font-size:.95rem;font-weight:600;color:var(--white);margin-bottom:16px;line-height:1.55}
+.qopts{display:flex;flex-direction:column;gap:8px}
+.qopt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--border2);cursor:pointer;transition:all .15s;font-size:.875rem;color:var(--light);background:transparent;width:100%;text-align:left}
+.qopt:hover:not(.answered){border-color:rgba(45,95,138,.25);background:rgba(45,95,138,.04)}
+.qopt.sel{border-color:var(--blue3);background:rgba(45,95,138,.08);color:var(--white)}
+.qopt.correct{border-color:#10b981;background:rgba(16,185,129,.08);color:#34d399}
+.qopt.wrong{border-color:#f43f5e;background:rgba(244,63,94,.08);color:#fb7185}
+.qoptl{width:24px;height:24px;border-radius:50%;background:var(--bg4);color:var(--gray);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono)}
+.qopt.sel .qoptl{background:var(--blue3);color:white}
+.qopt.correct .qoptl{background:#10b981;color:white}
+.qopt.wrong .qoptl{background:#f43f5e;color:white}
+.qfb{padding:10px 14px;border-radius:var(--r);font-size:.82rem;margin-top:10px;font-family:var(--mono);display:none;line-height:1.5}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#34d399}
+.qfb.ko{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:#fb7185}
+.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px}
+.qscore{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:32px;text-align:center;display:none}
+.qscore.show{display:block}
+.qsval{font-size:3.2rem;font-weight:800;color:var(--blue3);font-family:var(--mono);line-height:1}
+.qslbl{font-size:.85rem;color:var(--gray);margin-top:6px}
+.qsmsg{font-size:.85rem;color:var(--gray);margin-top:12px;font-family:var(--mono);line-height:1.6}
+/* Resources */
+.rescard{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);margin-bottom:8px;transition:border-color .15s}
+.rescard:hover{border-color:rgba(45,95,138,.15)}
+.resico{width:30px;height:30px;border-radius:6px;background:rgba(45,95,138,.08);border:1px solid rgba(45,95,138,.15);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;font-family:var(--mono);color:var(--blue3);font-weight:700}
+.restitle{font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:2px}
+.resdesc{font-size:.77rem;color:var(--gray)}
+/* Hamburger */
+.hamb{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:transparent;z-index:300;flex-shrink:0}
+.hamb span{display:block;width:22px;height:2px;background:#3a4a5e;border-radius:2px;transition:all .3s}
+.hamb.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamb.open span:nth-child(2){opacity:0}
+.hamb.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mdrawer{display:none;position:fixed;top:0;left:0;bottom:0;width:260px;background:#f0f3f8;border-right:1px solid var(--border2);z-index:299;flex-direction:column;padding:80px 14px 28px;gap:3px;box-shadow:4px 0 32px rgba(0,0,0,.6)}
+.mdrawer.open{display:flex}
+.dov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:298}
+.dov.open{display:block}
+.dbot{margin-top:auto;padding-top:16px;border-top:1px solid var(--border2)}
+/* Upgrade modal */
+.umov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px}
+.umov.show{display:flex}
+.umbox{background:#ffffff;border:1px solid rgba(45,95,138,.15);border-radius:14px;padding:30px 26px;max-width:380px;width:100%;text-align:center}
+.umbox h2{font-size:1.3rem;font-weight:800;margin-bottom:8px;font-family:var(--mono)}
+.umbox p{font-size:.84rem;color:var(--gray);line-height:1.6;margin-bottom:18px;font-family:var(--mono)}
+.umfeats{text-align:left;margin-bottom:20px;display:flex;flex-direction:column;gap:7px}
+.umfeat{display:flex;gap:9px;align-items:center;font-size:.82rem;color:var(--gray);font-family:var(--mono)}
+.umfeat::before{content:'✓';color:var(--blue3);font-weight:700;flex-shrink:0}
+.umprice{font-size:1.9rem;font-weight:800;color:var(--blue3);margin-bottom:5px;font-family:var(--mono)}
+.umprice span{font-size:.85rem;font-weight:400;color:var(--gray)}
+.umcta{display:block;width:100%;padding:13px;background:var(--blue3);color:white;border:none;border-radius:var(--r);font-family:var(--mono);font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;margin-bottom:9px;transition:all .15s}
+.umcta:hover{background:var(--blue2)}
+.umdis{background:none;border:none;color:var(--gray);font-size:.78rem;cursor:pointer;font-family:var(--mono)}
+/* Templates */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tcard{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:18px;cursor:pointer;transition:all .2s}
+.tcard:hover{border-color:rgba(96,165,250,.3);transform:translateY(-2px)}
+.ticon{font-size:1.5rem;margin-bottom:10px}
+.tname{font-size:.88rem;font-weight:700;margin-bottom:4px;font-family:var(--mono)}
+.tdesc{font-size:.75rem;color:var(--gray);line-height:1.5}
+.ttag{display:inline-block;margin-top:8px;font-size:.66rem;font-weight:600;color:#2d5f8a;background:rgba(45,95,138,.08);padding:2px 9px;border-radius:100px;font-family:var(--mono)}
+/* Responsive */
+@media(max-width:768px){
+  html{-webkit-text-size-adjust:100%}
+  body{overflow-x:hidden}
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .topbar{padding:0 14px;height:54px}
+  .hamb{display:flex}
+  .content{padding:14px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+  .two-col{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+  .fcard{padding:16px 14px}
+  #genBtn{padding:14px;font-size:.95rem;min-height:50px}
+  input,select,textarea{font-size:16px !important}
+  .tgrid{grid-template-columns:1fr 1fr}
+  .rtabs{overflow-x:auto}
+  .rtab{padding:8px 12px;font-size:.72rem}
+  .dlrow{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="dov" id="dov" onclick="closeDr()"></div>
+<div class="mdrawer" id="mdr">
+  <button class="ni active" onclick="sv('gen');closeDr()"><span style="font-family:var(--mono);width:16px">&gt;</span> Generate</button>
+  <button class="ni" onclick="sv('tmpl');closeDr()"><span style="font-family:var(--mono);width:16px">#</span> Templates</button>
+  <button class="ni" onclick="sv('saved');closeDr()"><span style="font-family:var(--mono);width:16px">@</span> Saved</button>
+  <button class="ni" onclick="sv('set');closeDr()"><span style="font-family:var(--mono);width:16px">$</span> Settings</button>
+  <div class="dbot">
+    <div class="ubanner"><p><strong>Unlock unlimited kits</strong><br/>PPTX + Word + interactive quiz.</p>
+    <a class="ubtn" href="https://humanaigen.gumroad.com/l/trainiq" target="_blank">Upgrade — 39€/month →</a></div>
+  </div>
+</div>
+
+<div class="umov" id="umod">
+  <div class="umbox">
+    <div style="font-size:1.8rem;margin-bottom:10px;font-family:var(--mono)">&gt;_</div>
+    <h2>Upgrade to Pro</h2>
+    <p>Unlimited kits, slides, exercises and quizzes for any topic.</p>
+    <div class="umfeats">
+      <div class="umfeat">Unlimited training kits</div>
+      <div class="umfeat">Download slides (.pptx)</div>
+      <div class="umfeat">Download exercises (.doc)</div>
+      <div class="umfeat">Interactive quiz for learners</div>
+      <div class="umfeat">FR & EN bilingual</div>
+    </div>
+    <div class="umprice">39€<span>/month</span></div>
+    <a class="umcta" href="https://humanaigen.gumroad.com/l/trainiq" target="_blank">Get Pro Access →</a>
+    <button class="umdis" onclick="document.getElementById('umod').classList.remove('show')">Maybe later</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="s-logo"><div class="lmark">&gt;_</div><span>Train<span style="color:var(--blue)">IQ</span></span></div>
+    <div class="nsec">// workspace</div>
+    <button class="ni active" onclick="sv('gen')"><span style="font-family:var(--mono);width:16px">&gt;</span> Generate Kit</button>
+    <button class="ni" onclick="sv('tmpl')"><span style="font-family:var(--mono);width:16px">#</span> Templates</button>
+    <button class="ni" onclick="sv('saved')"><span style="font-family:var(--mono);width:16px">@</span> Saved Kits</button>
+    <div class="nsec">// account</div>
+    <button class="ni" onclick="sv('set')"><span style="font-family:var(--mono);width:16px">$</span> Settings</button>
+    <div class="sb-bot">
+      <div class="ubanner"><p><strong>Unlock unlimited kits</strong><br/>PPTX + Word + interactive quiz.</p>
+      <a class="ubtn" href="https://humanaigen.gumroad.com/l/trainiq" target="_blank">Upgrade — 39€/month →</a></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="tbl">
+        <button class="hamb" id="hamb" onclick="togDr()"><span></span><span></span><span></span></button>
+        <div class="tbtitle" id="tbtitle">// generate_kit</div>
+      </div>
+      <div class="tbr">
+        <div class="ltog">
+          <button class="lbtn active" id="ben" onclick="setLang('en')">EN</button>
+          <div style="width:1px;background:rgba(255,255,255,.08);height:16px"></div>
+          <button class="lbtn" id="bfr" onclick="setLang('fr')">FR</button>
+        </div>
+        <button class="btn btn-g" id="newBtn" style="display:none" onclick="resetForm()">+ New</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- GENERATE -->
+      <div class="view active" id="view-gen">
+        <div id="formSec">
+          <div class="ph"><h1>New Training Kit</h1><p>Fill in the details — AI generates slides, exercises & interactive quiz.</p></div>
+          <div class="two-col">
+            <div class="fcard">
+              <h3>// training_details</h3>
+              <div class="ferr" id="ferr">Please enter the training topic.</div>
+              <div class="fr"><label>Topic / Title *</label><input type="text" id="topic" placeholder="e.g. Introduction to Machine Learning"/></div>
+              <div class="fgrid">
+                <div class="fr"><label>Target Audience</label><input type="text" id="audience" placeholder="e.g. HR Managers"/></div>
+                <div class="fr"><label>Duration</label><select id="dur"><option>1 hour</option><option>Half day</option><option selected>1 day</option><option>2 days</option><option>1 week</option></select></div>
+              </div>
+              <div class="fr"><label>Level</label>
+                <div class="lpills">
+                  <div class="lp active" onclick="setLvl(this,'Beginner')">Beginner</div>
+                  <div class="lp" onclick="setLvl(this,'Intermediate')">Intermediate</div>
+                  <div class="lp" onclick="setLvl(this,'Advanced')">Advanced</div>
+                </div>
+              </div>
+              <div class="fgrid">
+                <div class="fr"><label>Format</label><select id="fmt"><option>In-person</option><option selected>Remote</option><option>Blended</option><option>E-learning</option></select></div>
+                <div class="fr"><label>Tools / Software</label><input type="text" id="tools" placeholder="e.g. Python, Excel"/></div>
+              </div>
+              <div class="fr"><label>Learning Objectives</label><textarea id="obj" placeholder="e.g. Understand key concepts, apply algorithms, evaluate results."></textarea></div>
+              <button class="btn btn-p" id="genBtn" onclick="generate()" style="width:100%;padding:13px;font-size:.9rem;margin-top:4px;font-family:var(--mono)">&gt;_ generate_kit()</button>
+            </div>
+            <div id="outSec">
+              <div class="terminal" id="termSec">
+                <div class="tbar"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><span class="tlbl">trainiq.ai — kit_generator v2</span></div>
+                <div class="tbody">
+                  <div class="trow" id="tr0"><div class="tav av-hr">HR</div><div class="tbbl hr"><div class="tblbl hr">// trainer_input</div><div class="tbtxt" id="tr0t">Waiting for input…</div></div></div>
+                  <div class="trow" id="tr1"><div class="tav av-ai">AI</div><div class="tbbl ai"><div class="tblbl ai">// TrainIQ v2.0</div><div class="tbtxt"><div class="typing"><span></span><span></span><span></span></div></div></div></div>
+                  <div class="trow" id="tr2"><div class="tav av-ai">AI</div><div class="tbbl ai"><div class="tblbl ai">// modules_built</div><div class="tbtxt" id="tr2t">—</div><div class="tchips" id="tr2c"></div></div></div>
+                  <div class="trow" id="tr3"><div class="tav av-ai">AI</div><div class="tbbl ai"><div class="tblbl ai">// files_ready</div><div class="tbtxt" id="tr3t">—</div><div class="tchips" id="tr3c"></div></div></div>
+                  <div class="trow" id="tr4"><div class="tav av-ai">AI</div><div class="tbbl ai"><div class="tblbl ai">// kit_complete</div><div class="tbtxt" id="tr4t">—</div></div></div>
+                </div>
+              </div>
+              <div class="ail" id="aiLoad">
+                <div class="aisp"></div>
+                <h3>&gt;_ generating kit…</h3>
+                <p>Building your complete training kit.</p>
+                <div class="aisteps">
+                  <div class="aistep" id="s1"><div class="stepd"></div><span>Analysing topic & audience</span></div>
+                  <div class="aistep" id="s2"><div class="stepd"></div><span>Building module structure</span></div>
+                  <div class="aistep" id="s3"><div class="stepd"></div><span>Generating exercises & quiz</span></div>
+                  <div class="aistep" id="s4"><div class="stepd"></div><span>Preparing downloadable files</span></div>
+                </div>
+              </div>
+              <div id="resSec" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div class="view" id="view-tmpl">
+        <div class="ph"><h1>Templates</h1><p>Start from a ready-made topic.</p></div>
+        <div class="tgrid" id="tgrid"></div>
+      </div>
+
+      <!-- SAVED -->
+      <div class="view" id="view-saved">
+        <div class="ph"><h1>Saved Kits</h1></div>
+        <div id="savedList"><div style="text-align:center;padding:60px;color:var(--gray);font-family:var(--mono)"><div style="font-size:2rem;margin-bottom:12px;opacity:.3">&gt;_</div><p style="font-size:.82rem">No kits yet.</p></div></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" id="view-set">
+        <div class="ph"><h1>Settings</h1></div>
+        <div class="fcard" style="max-width:460px">
+          <div class="fr"><label>Default Audience</label><input type="text" placeholder="e.g. HR Managers"/></div>
+          <div class="fr"><label>Default Duration</label><select><option>1 day</option><option>Half day</option></select></div>
+          <button class="btn btn-p" style="margin-top:4px;font-family:var(--mono)">save_settings()</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const GUMROAD='https://humanaigen.gumroad.com/l/trainiq';
+let lang='en', level='Beginner', genCount=0, kit=null;
+const saved=[];
+
+function setLang(l){lang=l;document.getElementById('ben').classList.toggle('active',l==='en');document.getElementById('bfr').classList.toggle('active',l==='fr');}
+function setLvl(el,v){document.querySelectorAll('.lp').forEach(p=>p.classList.remove('active'));el.classList.add('active');level=v;}
+function togDr(){document.getElementById('mdr').classList.toggle('open');document.getElementById('dov').classList.toggle('open');document.getElementById('hamb').classList.toggle('open');}
+function closeDr(){document.getElementById('mdr').classList.remove('open');document.getElementById('dov').classList.remove('open');document.getElementById('hamb').classList.remove('open');}
+function sv(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+n).classList.add('active');
+  if(event&&event.currentTarget)event.currentTarget.classList.add('active');
+  const t={gen:'// generate_kit',tmpl:'// templates',saved:'// saved_kits',set:'// settings'};
+  document.getElementById('tbtitle').textContent=t[n]||n;
+}
+
+// ── GENERATE ──────────────────────────────────────────────────
+async function generate(){
+  const topic=document.getElementById('topic').value.trim();
+  if(!topic){document.getElementById('ferr').classList.add('show');return;}
+  document.getElementById('ferr').classList.remove('show');
+  const audience=document.getElementById('audience').value.trim();
+  const dur=document.getElementById('dur').value;
+  const fmt=document.getElementById('fmt').value;
+  const obj=document.getElementById('obj').value.trim();
+  const tools=document.getElementById('tools').value.trim();
+  const li=lang==='fr'?'Write the entire kit in French.':'Write the entire kit in English.';
+
+  document.getElementById('termSec').style.display='block';
+  document.getElementById('aiLoad').classList.remove('show');
+  document.getElementById('resSec').style.display='none';
+  document.getElementById('genBtn').disabled=true;
+  document.getElementById('newBtn').style.display='none';
+
+  document.getElementById('tr0t').textContent=`generate_kit("${topic}", "${audience||'general'}", "${level}", "${dur}")`;
+  document.getElementById('tr0').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('tr1').classList.add('show');
+    document.getElementById('aiLoad').classList.add('show');
+    ['s1','s2','s3','s4'].forEach((s,i)=>setTimeout(()=>{
+      document.getElementById(s).classList.add('active');
+      if(i>0)document.getElementById('s'+i).classList.add('done');
+    },i*650));
+  },600);
+
+  const prompt=`Create a complete training kit. ${li}
+
+Topic: ${topic}
+Audience: ${audience||'general professionals'}
+Level: ${level}
+Duration: ${dur}
+Format: ${fmt}
+${obj?'Objectives: '+obj:''}
+${tools?'Tools: '+tools:''}
+
+Return ONLY valid JSON (no markdown, no backticks):
+{
+  "title": "Kit title",
+  "summary": "2-sentence overview",
+  "modules": [
+    {
+      "name": "Module name",
+      "duration": "e.g. 45 min",
+      "objectives": ["obj1","obj2","obj3"],
+      "exercises": [
+        {
+          "title": "Exercise title",
+          "description": "Detailed 2-3 sentence description with context and purpose.",
+          "type": "individual|group|practical|case-study",
+          "objectives": ["What learner will achieve"],
+          "steps": ["Detailed step 1","Detailed step 2","Detailed step 3","Detailed step 4"],
+          "deliverable": "What the learner must produce or demonstrate"
+        }
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Question text",
+      "options": ["Option A","Option B","Option C","Option D"],
+      "correct": 0,
+      "explanation": "Clear explanation of why this answer is correct"
+    }
+  ],
+  "resources": [
+    {"title":"Title","description":"Description","type":"book|article|video|tool"}
+  ]
+}
+Generate 3-4 modules with 2 detailed exercises each, 5-6 quiz questions with explanations, 4-5 resources.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=(data.content||[]).map(c=>c.text||'').join('');
+    kit=JSON.parse(txt.replace(/```json|```/g,'').trim());
+  }catch(e){
+    kit=getFallback(topic,audience,dur,level,obj,tools);
+  }
+  renderKit(kit,topic,audience,dur);
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderKit(k,topic,audience,dur){
+  setTimeout(()=>document.getElementById('s4').classList.add('done'),200);
+  const mc=(k.modules||[]).length;
+  const ec=(k.modules||[]).reduce((a,m)=>a+(m.exercises||[]).length,0);
+  document.getElementById('tr2t').textContent=`${mc} modules built. ${ec} exercises with detailed steps.`;
+  document.getElementById('tr2c').innerHTML=(k.modules||[]).map(m=>`<span class="chip cb">${m.name.substring(0,16)}</span>`).join('');
+  document.getElementById('tr3t').textContent=`PPTX presentation + Word exercise workbook ready.`;
+  document.getElementById('tr3c').innerHTML='<span class="chip cg">PPTX ready</span><span class="chip cg">Word ready</span>';
+  document.getElementById('tr4t').textContent=`Kit complete — ${(k.quiz||[]).length} quiz questions. Take the interactive quiz in the app.`;
+  setTimeout(()=>document.getElementById('tr2').classList.add('show'),400);
+  setTimeout(()=>document.getElementById('tr3').classList.add('show'),900);
+  setTimeout(()=>document.getElementById('tr4').classList.add('show'),1400);
+
+  setTimeout(()=>{
+    document.getElementById('aiLoad').classList.remove('show');
+    document.getElementById('termSec').style.display='none';
+    const sec=document.getElementById('resSec');
+    sec.style.display='block';
+    const uid='q'+Date.now();
+
+    // Modules tab
+    const modH=(k.modules||[]).map((m,i)=>`
+      <div class="modcard">
+        <div class="modh"><div class="modn">${String(i+1).padStart(2,'0')}</div><div class="modtitle">${m.name}</div><div class="moddur">${m.duration||''}</div></div>
+        <ul class="objl">${(m.objectives||[]).map(o=>`<li>${o}</li>`).join('')}</ul>
+      </div>`).join('');
+
+    // Exercises tab — detailed
+    const exH=(k.modules||[]).flatMap((m,mi)=>(m.exercises||[]).map((ex,ei)=>`
+      <div class="excard">
+        <div class="exmod">MODULE ${mi+1}: ${m.name.toUpperCase()}</div>
+        <div class="exh"><div class="exn">${ei+1}</div><div class="extitle">${ex.title}</div><span class="extype">${ex.type||'exercise'}</span></div>
+        <div class="exdesc">${ex.description}</div>
+        ${(ex.objectives&&ex.objectives.length)?`<div class="exobj"><div class="exobj-lbl">Learning Outcomes</div><ul>${ex.objectives.map(o=>`<li>${o}</li>`).join('')}</ul></div>`:''}
+        ${(ex.steps&&ex.steps.length)?`<div class="exsteps"><div class="exsteps-lbl">Step-by-Step Instructions</div>${ex.steps.map((s,si)=>`<div class="exstep"><div class="exstepn">${si+1}</div><div class="exstept">${s}</div></div>`).join('')}</div>`:''}
+        ${ex.deliverable?`<div class="exdeliv"><div class="exdeliv-lbl">Deliverable</div><p>${ex.deliverable}</p></div>`:''}
+      </div>`)
+    ).join('');
+
+    // Quiz tab — interactive
+    const quizH=buildQuiz(k.quiz||[], uid);
+
+    // Resources tab
+    const ricons={book:'BK',article:'AR',video:'VD',tool:'TL'};
+    const resH=(k.resources||[]).map(r=>`
+      <div class="rescard"><div class="resico">${ricons[r.type]||'RS'}</div><div><div class="restitle">${r.title}</div><div class="resdesc">${r.description}</div></div></div>`).join('');
+
+    sec.innerHTML=`
+      <div class="rcard">
+        <div class="rhead">
+          <h3>${k.title||topic}</h3>
+          <div class="dlrow">
+            <button class="dlbtn dl-pptx" onclick="dlPptx()">⬇ Slides (.pptx)</button>
+            <button class="dlbtn dl-word" onclick="dlWord()">⬇ Exercises (.doc)</button>
+          </div>
+        </div>
+        <div class="rbody">
+          <div class="mpills">
+            ${audience?`<span class="mp">${audience}</span>`:''}
+            <span class="mp">${level}</span><span class="mp">${dur}</span>
+            <span class="mp">${mc} modules</span><span class="mp">${ec} exercises</span>
+            <span class="mp">${(k.quiz||[]).length} quiz questions</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--light);line-height:1.65;margin-bottom:16px;font-family:var(--mono)">${k.summary||''}</p>
+          <div class="rtabs">
+            <button class="rtab active" onclick="stab(this,'m-${uid}')">📋 Modules</button>
+            <button class="rtab" onclick="stab(this,'e-${uid}')">✏️ Exercises</button>
+            <button class="rtab" onclick="stab(this,'quiz-${uid}')">🧠 Take Quiz</button>
+            <button class="rtab" onclick="stab(this,'r-${uid}')">📚 Resources</button>
+          </div>
+          <div class="rtc active" id="m-${uid}">${modH}</div>
+          <div class="rtc" id="e-${uid}">${exH||'<p style="color:var(--gray);font-size:.82rem;font-family:var(--mono)">No exercises.</p>'}</div>
+          <div class="rtc" id="quiz-${uid}">${quizH}</div>
+          <div class="rtc" id="r-${uid}">${resH||'<p style="color:var(--gray);font-size:.82rem;font-family:var(--mono)">No resources.</p>'}</div>
+        </div>
+      </div>`;
+
+    genCount++;
+    if(genCount>2)setTimeout(()=>document.getElementById('umod').classList.add('show'),2000);
+    saved.push({title:k.title||topic,audience,dur,level,id:Date.now()});
+    renderSaved();
+    document.getElementById('genBtn').disabled=false;
+    document.getElementById('newBtn').style.display='block';
+    initQuiz(k.quiz||[],uid);
+  },2000);
+}
+
+function stab(btn,id){
+  const rb=btn.closest('.rbody');
+  rb.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  rb.querySelectorAll('.rtc').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── INTERACTIVE QUIZ ─────────────────────────────────────────
+function buildQuiz(qs,uid){
+  if(!qs.length)return'<p style="color:var(--gray);font-size:.82rem;font-family:var(--mono)">No quiz questions.</p>';
+  const L=['A','B','C','D'];
+  return`
+    <div class="qprog">
+      <div class="qpbar"><div class="qpfill" id="qpf-${uid}" style="width:0%"></div></div>
+      <div class="qptxt" id="qpt-${uid}">Q 1 / ${qs.length}</div>
+    </div>
+    ${qs.map((q,qi)=>`
+      <div class="qcard ${qi===0?'active':''}" id="qc-${uid}-${qi}">
+        <div class="qnum">QUESTION ${qi+1} OF ${qs.length}</div>
+        <div class="qtext">${q.question}</div>
+        <div class="qopts" id="qo-${uid}-${qi}">
+          ${(q.options||[]).map((o,oi)=>`
+            <button class="qopt" id="qb-${uid}-${qi}-${oi}" onclick="pick(${qi},${oi},'${uid}')">
+              <div class="qoptl">${L[oi]}</div><div>${o}</div>
+            </button>`).join('')}
+        </div>
+        <div class="qfb" id="qfb-${uid}-${qi}"></div>
+        <div class="qnav">
+          <button class="btn btn-g" onclick="prevQ(${qi},'${uid}')" ${qi===0?'style="visibility:hidden"':''}>← Prev</button>
+          <button class="btn btn-p" id="qnxt-${uid}-${qi}" onclick="nextQ(${qi},${qs.length},'${uid}')" disabled>Next →</button>
+        </div>
+      </div>`).join('')}
+    <div class="qscore" id="qsc-${uid}">
+      <div class="qsval" id="qsv-${uid}">0/${qs.length}</div>
+      <div class="qslbl">Your score</div>
+      <div class="qsmsg" id="qsm-${uid}"></div>
+      <button class="btn btn-p" style="margin-top:20px" onclick="retake('${uid}',${qs.length})">↺ Retake Quiz</button>
+    </div>`;
+}
+
+function initQuiz(qs,uid){window['_q_'+uid]={qs,ans:new Array(qs.length).fill(-1),cur:0};}
+
+function pick(qi,oi,uid){
+  const st=window['_q_'+uid];
+  if(!st||st.ans[qi]!==-1)return;
+  st.ans[qi]=oi;
+  const q=st.qs[qi];
+  const opts=document.querySelectorAll(`#qo-${uid}-${qi} .qopt`);
+  opts.forEach((el,i)=>{
+    el.classList.add('answered');
+    if(i===q.correct)el.classList.add('correct');
+    else if(i===oi)el.classList.add('wrong');
+    else if(i===oi&&oi===q.correct)el.classList.add('correct');
+  });
+  const fb=document.getElementById(`qfb-${uid}-${qi}`);
+  const ok=oi===q.correct;
+  fb.className=`qfb show ${ok?'ok':'ko'}`;
+  fb.textContent=ok?`✓ Correct! ${q.explanation||''}` :`✗ Incorrect. ${q.explanation||'Correct: '+q.options[q.correct]}`;
+  const nb=document.getElementById(`qnxt-${uid}-${qi}`);
+  if(nb)nb.disabled=false;
+  updProg(uid);
+}
+
+function nextQ(qi,tot,uid){
+  document.getElementById(`qc-${uid}-${qi}`).classList.remove('active');
+  if(qi+1<tot){document.getElementById(`qc-${uid}-${qi+1}`).classList.add('active');window['_q_'+uid].cur=qi+1;updProg(uid);}
+  else showScore(uid,tot);
+}
+function prevQ(qi,uid){
+  if(qi===0)return;
+  document.getElementById(`qc-${uid}-${qi}`).classList.remove('active');
+  document.getElementById(`qc-${uid}-${qi-1}`).classList.add('active');
+  window['_q_'+uid].cur=qi-1;updProg(uid);
+}
+function updProg(uid){
+  const st=window['_q_'+uid];if(!st)return;
+  const ans=st.ans.filter(a=>a!==-1).length;
+  const pct=Math.round(ans/st.qs.length*100);
+  const pf=document.getElementById(`qpf-${uid}`);const pt=document.getElementById(`qpt-${uid}`);
+  if(pf)pf.style.width=pct+'%';
+  if(pt)pt.textContent=`Q ${st.cur+1} / ${st.qs.length}`;
+}
+function showScore(uid,tot){
+  document.querySelectorAll(`[id^="qc-${uid}-"]`).forEach(el=>el.classList.remove('active'));
+  const sc=document.getElementById(`qsc-${uid}`);if(sc)sc.classList.add('show');
+  const st=window['_q_'+uid];if(!st)return;
+  const correct=st.ans.filter((a,i)=>a===st.qs[i].correct).length;
+  const sv=document.getElementById(`qsv-${uid}`);
+  const sm=document.getElementById(`qsm-${uid}`);
+  if(sv)sv.textContent=`${correct}/${tot}`;
+  const pct=Math.round(correct/tot*100);
+  if(sm)sm.textContent=pct>=80?'Excellent! You passed. ✓':pct>=60?'Good work — a bit more practice needed.':'Keep studying and retake the quiz.';
+}
+function retake(uid,tot){
+  const st=window['_q_'+uid];if(!st)return;
+  st.ans=new Array(tot).fill(-1);st.cur=0;
+  document.getElementById(`qsc-${uid}`).classList.remove('show');
+  for(let i=0;i<tot;i++){
+    const qc=document.getElementById(`qc-${uid}-${i}`);if(qc)qc.classList.toggle('active',i===0);
+    document.querySelectorAll(`#qo-${uid}-${i} .qopt`).forEach(el=>el.className='qopt');
+    const fb=document.getElementById(`qfb-${uid}-${i}`);if(fb){fb.className='qfb';fb.textContent='';}
+    const nb=document.getElementById(`qnxt-${uid}-${i}`);if(nb)nb.disabled=true;
+  }
+  updProg(uid);
+}
+
+// ── DOWNLOAD PPTX ─────────────────────────────────────────────
+async function dlPptx(){
+  if(!kit){alert('Generate a kit first.');return;}
+  const PG=window.PptxGenJS||window.pptxgen;
+  if(!PG){alert('PptxGenJS not loaded. Refresh and try again.');return;}
+  const k=kit;
+  const pres=new PG();
+  pres.layout='LAYOUT_16x9';pres.title=k.title;
+  const BG='0D1117',BG2='13181F',BL='3B82F6',BLL='60A5FA',WH='E8EDF5',GR='6B7A99';
+
+  // Title
+  let s=pres.addSlide();s.background={color:BG};
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:0.06,h:5.625,fill:{color:BL},line:{color:BL}});
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:5.3,w:10,h:0.06,fill:{color:BL},line:{color:BL}});
+  s.addText('TRAINING KIT',{x:0.5,y:0.9,w:9,h:0.45,fontSize:9,color:BLL,bold:true,charSpacing:10,margin:0});
+  s.addText(k.title,{x:0.5,y:1.5,w:9,h:1.8,fontSize:32,color:WH,bold:true,margin:0,wrap:true});
+  s.addText(k.summary||'',{x:0.5,y:3.4,w:7.5,h:0.8,fontSize:13,color:GR,margin:0,wrap:true});
+  s.addText(`${(k.modules||[]).length} Modules  ·  ${(k.modules||[]).reduce((a,m)=>a+(m.exercises||[]).length,0)} Exercises  ·  ${(k.quiz||[]).length} Quiz Questions`,{x:0.5,y:4.8,w:9,h:0.4,fontSize:11,color:GR,margin:0});
+
+  // Agenda
+  s=pres.addSlide();s.background={color:BG};
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:10,h:0.95,fill:{color:BG2},line:{color:BG2}});
+  s.addText('AGENDA',{x:0.5,y:0.22,w:9,h:0.5,fontSize:9,color:BLL,bold:true,charSpacing:10,margin:0});
+  (k.modules||[]).forEach((m,i)=>{
+    const y=1.1+i*0.75;
+    s.addShape(pres.shapes.RECTANGLE,{x:0.5,y:y,w:0.42,h:0.42,fill:{color:BL},line:{color:BL}});
+    s.addText(String(i+1),{x:0.5,y:y,w:0.42,h:0.42,fontSize:13,color:'FFFFFF',bold:true,align:'center',valign:'middle',margin:0});
+    s.addText(m.name,{x:1.05,y:y+0.04,w:6.5,h:0.32,fontSize:14,color:WH,bold:true,margin:0});
+    s.addText(m.duration||'',{x:7.8,y:y+0.04,w:1.8,h:0.32,fontSize:11,color:GR,align:'right',margin:0});
+    if(i<(k.modules||[]).length-1)s.addShape(pres.shapes.LINE,{x:0.5,y:y+0.5,w:9,h:0,line:{color:'1A2030',width:0.5}});
+  });
+
+  // Per module
+  (k.modules||[]).forEach((mod,mi)=>{
+    // Divider
+    s=pres.addSlide();s.background={color:BG};
+    s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:10,h:5.625,fill:{color:BG2},line:{color:BG2}});
+    s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:10,h:0.06,fill:{color:BL},line:{color:BL}});
+    s.addText(`MODULE ${String(mi+1).padStart(2,'0')}`,{x:1,y:1.6,w:8,h:0.45,fontSize:9,color:BLL,bold:true,charSpacing:10,align:'center',margin:0});
+    s.addText(mod.name,{x:1,y:2.15,w:8,h:1.2,fontSize:28,color:WH,bold:true,align:'center',margin:0,wrap:true});
+    s.addText(mod.duration||'',{x:1,y:3.55,w:8,h:0.38,fontSize:12,color:GR,align:'center',margin:0});
+
+    // Objectives
+    s=pres.addSlide();s.background={color:BG};
+    s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:10,h:0.85,fill:{color:BG2},line:{color:BG2}});
+    s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:0.06,h:5.625,fill:{color:BL},line:{color:BL}});
+    s.addText(mod.name,{x:0.4,y:0.16,w:9,h:0.52,fontSize:10,color:GR,margin:0});
+    s.addText('Learning Objectives',{x:0.4,y:1.0,w:9,h:0.55,fontSize:20,color:WH,bold:true,margin:0});
+    const obs=(mod.objectives||[]).map((o,oi)=>({text:o,options:{bullet:true,breakLine:oi<(mod.objectives||[]).length-1,color:WH,fontSize:14,paraSpaceAfter:10}}));
+    if(obs.length)s.addText(obs,{x:0.6,y:1.7,w:9,h:3.5,margin:0,wrap:true});
+  });
+
+  // Assessment
+  s=pres.addSlide();s.background={color:BG};
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:10,h:0.85,fill:{color:BG2},line:{color:BG2}});
+  s.addText('ASSESSMENT',{x:0.5,y:0.18,w:9,h:0.5,fontSize:9,color:BLL,bold:true,charSpacing:10,margin:0});
+  s.addText(`${(k.quiz||[]).length} Interactive Questions`,{x:0.5,y:1.1,w:9,h:0.8,fontSize:26,color:WH,bold:true,margin:0});
+  s.addText('Take the interactive quiz directly in the TrainIQ app.',{x:0.5,y:2.1,w:9,h:0.5,fontSize:13,color:GR,margin:0});
+
+  // Close
+  s=pres.addSlide();s.background={color:BG};
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:0,w:0.06,h:5.625,fill:{color:BL},line:{color:BL}});
+  s.addShape(pres.shapes.RECTANGLE,{x:0,y:5.3,w:10,h:0.06,fill:{color:BL},line:{color:BL}});
+  s.addText('THANK YOU',{x:1,y:1.8,w:8,h:0.5,fontSize:9,color:BLL,bold:true,charSpacing:10,align:'center',margin:0});
+  s.addText(k.title,{x:1,y:2.4,w:8,h:1.0,fontSize:24,color:WH,bold:true,align:'center',margin:0,wrap:true});
+  s.addText('Generated by TrainIQ · humanai.biz',{x:1,y:4.7,w:8,h:0.38,fontSize:10,color:GR,align:'center',margin:0});
+
+  await pres.writeFile({fileName:`${(k.title||'training-kit').replace(/[^a-z0-9]/gi,'-')}.pptx`});
+}
+
+// ── DOWNLOAD WORD ─────────────────────────────────────────────
+function dlWord(){
+  if(!kit){alert('Generate a kit first.');return;}
+  const k=kit;
+  let h='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>';
+  h+='body{font-family:Calibri,sans-serif;max-width:800px;margin:40px auto;color:#1a1a1a;line-height:1.7;font-size:11pt}';
+  h+='h1{font-size:22pt;color:#1E3A5F;margin:0 0 4px}h2{font-size:16pt;color:#1E3A5F;margin:28px 0 4px;border-bottom:2px solid #3B82F6;padding-bottom:4px}';
+  h+='h3{font-size:13pt;color:#1D4ED8;margin:18px 0 4px}h4{font-size:11pt;color:#374151;margin:14px 0 3px}';
+  h+='.meta{color:#6B7A99;font-style:italic;margin-bottom:20px;font-size:10pt}';
+  h+='.ex{background:#F0F7FF;border-left:4px solid #3B82F6;padding:16px 18px;margin:14px 0;border-radius:0 6px 6px 0}';
+  h+='.badge{display:inline-block;background:#DBEAFE;color:#1D4ED8;padding:1px 10px;border-radius:10px;font-size:9pt;font-weight:600;margin-left:8px}';
+  h+='.outcomes{background:#F0FDF4;border-left:3px solid #10B981;padding:10px 14px;margin:10px 0}';
+  h+='.deliverable{background:#FFFBEB;border-left:3px solid #F59E0B;padding:10px 14px;margin:10px 0}';
+  h+='.line{border-bottom:1px solid #E5E7EB;height:24px;margin:4px 0}';
+  h+='ol{margin:8px 0 8px 20px}li{margin:3px 0}';
+  h+='</style></head><body>';
+  h+=`<h1>${k.title||'Training Kit'}</h1>`;
+  h+=`<div class="meta">Exercise Workbook &nbsp;·&nbsp; ${k.summary||''}</div>`;
+
+  (k.modules||[]).forEach((mod,mi)=>{
+    h+=`<h2>Module ${mi+1}: ${mod.name}</h2>`;
+    if(mod.duration)h+=`<p style="color:#6B7A99;font-size:10pt">Duration: ${mod.duration}</p>`;
+    h+='<h4>Learning Objectives</h4><ul>';
+    (mod.objectives||[]).forEach(o=>h+=`<li>${o}</li>`);
+    h+='</ul>';
+    if((mod.exercises||[]).length){
+      h+=`<h3>Exercises</h3>`;
+      (mod.exercises||[]).forEach((ex,ei)=>{
+        h+=`<div class="ex">`;
+        h+=`<p style="margin:0 0 8px"><strong>Exercise ${ei+1}: ${ex.title}</strong><span class="badge">${ex.type||'exercise'}</span></p>`;
+        h+=`<p style="margin:0 0 10px">${ex.description}</p>`;
+        if(ex.objectives&&ex.objectives.length){
+          h+=`<div class="outcomes"><strong>Learning Outcomes:</strong><ul style="margin:6px 0 0">`;
+          ex.objectives.forEach(o=>h+=`<li>${o}</li>`);
+          h+=`</ul></div>`;
+        }
+        if(ex.steps&&ex.steps.length){
+          h+=`<p><strong>Step-by-Step Instructions:</strong></p><ol>`;
+          ex.steps.forEach(s=>h+=`<li>${s}</li>`);
+          h+=`</ol>`;
+        }
+        if(ex.deliverable)h+=`<div class="deliverable"><strong>Deliverable:</strong> ${ex.deliverable}</div>`;
+        h+=`<p style="margin:14px 0 4px"><strong>Your Notes / Answer:</strong></p>`;
+        for(let i=0;i<5;i++)h+=`<div class="line"></div>`;
+        h+=`</div>`;
+      });
+    }
+  });
+
+  h+=`<h2>Quiz Answer Sheet</h2><p style="color:#6B7A99;font-size:10pt">Take the interactive quiz in the TrainIQ app, or use this sheet to write your answers manually.</p>`;
+  (k.quiz||[]).forEach((q,qi)=>{
+    h+=`<p style="margin:12px 0 4px"><strong>Q${qi+1}.</strong> ${q.question}</p>`;
+    (q.options||[]).forEach((o,oi)=>h+=`<p style="margin:2px 0;padding-left:16px">${['A','B','C','D'][oi]}. ${o}</p>`);
+    h+=`<p style="margin:6px 0 2px;color:#6B7A99;font-size:9pt">My answer: ____</p>`;
+  });
+
+  h+=`</body></html>`;
+  const blob=new Blob([h],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`${(k.title||'exercises').replace(/[^a-z0-9]/gi,'-')}-workbook.doc`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ── SAVED ────────────────────────────────────────────────────
+function renderSaved(){
+  const l=document.getElementById('savedList');if(!saved.length)return;
+  l.innerHTML=saved.map(k=>`
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px">
+      <div><div style="font-size:.88rem;font-weight:700;margin-bottom:3px;font-family:var(--mono)">${k.title}</div>
+      <div style="font-size:.74rem;color:var(--gray);font-family:var(--mono)">${k.audience||'—'} · ${k.level} · ${k.dur}</div></div>
+      <span style="background:#eef3f9;border:1px solid rgba(45,95,138,.15);color:#2d5f8a;padding:2px 9px;border-radius:100px;font-size:.66rem;font-weight:600;font-family:var(--mono)">kit</span>
+    </div>`).join('');
+}
+
+function resetForm(){
+  kit=null;
+  document.getElementById('termSec').style.display='block';
+  document.getElementById('aiLoad').classList.remove('show');
+  document.getElementById('resSec').style.display='none';
+  document.getElementById('topic').value='';document.getElementById('audience').value='';
+  document.getElementById('obj').value='';document.getElementById('tools').value='';
+  document.getElementById('genBtn').disabled=false;
+  document.getElementById('newBtn').style.display='none';
+  ['tr0','tr1','tr2','tr3','tr4'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+  ['s1','s2','s3','s4'].forEach(s=>document.getElementById(s).classList.remove('active','done'));
+  document.getElementById('tr0t').textContent='Waiting for input…';
+}
+
+// ── FALLBACK KIT ─────────────────────────────────────────────
+function getFallback(topic,audience,dur,level,obj,tools){
+  return{title:`Training Kit — ${topic}`,
+    summary:`A ${level.toLowerCase()} ${dur} programme on ${topic} for ${audience||'professionals'}. Covers core concepts, practical exercises, interactive quiz and curated resources.`,
+    modules:[
+      {name:'Introduction & Fundamentals',duration:'45 min',objectives:['Understand core concepts of '+topic,'Identify key terminology','Contextualise in your organisation'],
+       exercises:[
+         {title:'Concept Mapping',description:`Create a visual mind map of ${topic}. Place the main concept in the centre and branch out with related ideas, tools, and real-world applications from your work context.`,type:'individual',objectives:['Identify key concepts and their relationships','Connect theory to practice'],steps:['Write the main topic in the centre of a blank page','Add 5–7 main branches with core sub-topics','Under each branch, add 2–3 concrete examples or tools','Draw connections between related branches','Share your map with a partner and discuss differences'],deliverable:'A completed mind map with at least 5 branches and cross-connections.'},
+         {title:'Team Knowledge Audit',description:'Assess your team\'s collective knowledge and identify gaps before diving into the material. This exercise helps prioritise learning focus areas.',type:'group',objectives:['Surface existing knowledge','Identify priority learning areas'],steps:['Each person writes 3 things they already know (green sticky)','Each person writes 3 things they want to learn (yellow sticky)','Share and cluster notes on a shared board','Vote on the top 5 priority learning needs','Assign one person to track progress on each area'],deliverable:'A prioritised list of 5 team learning goals for this training.'}
+       ]},
+      {name:'Core Concepts & Techniques',duration:'1h 30min',objectives:['Apply the main techniques','Practice with real examples','Build execution confidence'],
+       exercises:[
+         {title:'Case Study Analysis',description:`Analyse a real-world scenario related to ${topic}. Work individually first, then discuss your findings with a partner to compare approaches and reasoning.`,type:'practical',objectives:['Apply theoretical knowledge to a real case','Develop structured problem-solving'],steps:['Read the case study individually (10 min)','Identify the 3 main challenges or decisions','Propose your recommended approach for each challenge','Write your reasoning with evidence from the material','Compare with a partner — note where you agree and disagree','Prepare 2 key takeaways to share with the group'],deliverable:'A one-page case analysis with 3 challenges, your recommendations, and 2 key takeaways.'},
+         {title:'Peer Teaching Exercise',description:'Teach a concept you just learned to a partner who hasn\'t seen it yet. Teaching is the most powerful way to consolidate learning.',type:'group',objectives:['Consolidate understanding through teaching','Identify gaps in your own knowledge'],steps:['Choose one concept from the session to teach','Prepare a 3-minute explanation (no slides needed)','Teach your partner — answer their questions','Switch roles','Debrief: What was hard to explain? What did you learn?'],deliverable:'A clear 3-minute verbal explanation and a list of 2 questions your partner asked.'}
+       ]},
+      {name:tools?`Tools & Implementation: ${tools.split(',')[0].trim()}`:'Advanced Application',duration:'1h',objectives:['Master key tools','Optimise workflows','Troubleshoot common issues'],
+       exercises:[
+         {title:'Hands-on Practice',description:`Complete a structured guided exercise using ${tools||'the main tools covered'}. Follow the step-by-step instructions and compare your output to the reference solution provided.`,type:'practical',objectives:['Build hands-on proficiency','Apply tool features in context'],steps:['Open the tool and explore the main interface (5 min)','Complete Task 1 following the instructions','Check your output against the reference solution','Identify any differences and understand why','Complete Task 2 independently without guidance','Document any issues or questions for the group debrief'],deliverable:'Completed Task 1 and Task 2 outputs, plus a list of 3 tips you would give a colleague.'},
+         {title:'Optimisation Challenge',description:'Review your Task 1 output and find at least 3 concrete ways to improve it. Focus on quality, speed, and clarity.',type:'individual',objectives:['Develop a critical eye','Learn to iterate and improve'],steps:['Review your Task 1 output with fresh eyes','Identify at least 3 specific weaknesses or inefficiencies','Apply each improvement one by one','Document what you changed and why','Measure the improvement — is the output noticeably better?'],deliverable:'An improved version of Task 1 with a written log of 3 changes made and their impact.'}
+       ]},
+      {name:'Review & Next Steps',duration:'30 min',objectives:['Validate knowledge','Plan application','Commit to next steps'],
+       exercises:[
+         {title:'Personal Action Plan',description:'Create a concrete 30-day plan to apply what you learned. Specific, measurable commitments are far more effective than vague intentions.',type:'individual',objectives:['Translate learning into action','Build accountability'],steps:['List 3 things you will START doing in the next 7 days','List 1 thing you will STOP doing','Set one measurable goal for 30 days from now','Identify one potential obstacle and how you will handle it','Find an accountability partner in the group and share your plan'],deliverable:'A written 30-day action plan with 3 start actions, 1 stop action, 1 measurable goal, and 1 accountability partner.'}
+       ]}
+    ],
+    quiz:[
+      {question:`What is the primary purpose of ${topic}?`,options:['Automate repetitive tasks only','Enable better decision-making','Reduce operational costs','Serve multiple purposes including automation, decisions, and efficiency'],correct:3,explanation:`${topic} typically serves multiple purposes. While it can automate tasks, its primary value is enabling smarter decisions and improving overall efficiency.`},
+      {question:'Which approach is most effective when building new skills?',options:['Jump straight to advanced techniques','Start with fundamentals and build progressively','Copy best practices without adapting them','Focus only on theory without practice'],correct:1,explanation:'Progressive learning from fundamentals ensures solid understanding and reduces mistakes when tackling more complex challenges.'},
+      {question:'What is the most critical factor for successful implementation?',options:['A large budget','Clear objectives and stakeholder buy-in','Hiring external consultants','Cutting training short to save time'],correct:1,explanation:'Clear objectives and stakeholder buy-in are consistently the most reliable predictors of success — more than budget or external expertise.'},
+      {question:'How should you measure whether training has been effective?',options:['Only check results at the end','Define measurable KPIs before starting and track throughout','Trust gut feeling','Compare results to competitors only'],correct:1,explanation:'Defining measurable KPIs upfront allows objective, ongoing assessment and helps you course-correct early if needed.'},
+      {question:'What is the best response when you hit an obstacle during implementation?',options:['Stop and wait for better conditions','Ignore it and continue unchanged','Iterate: test, learn, and adjust your approach','Immediately escalate to management'],correct:2,explanation:'An iterative approach — test, learn, adjust — is the most resilient and effective response to obstacles. It turns setbacks into learning opportunities.'}
+    ],
+    resources:[
+      {title:`Official Documentation — ${topic}`,description:'Start with the official guides, tutorials, and documentation for the main concepts covered in this training.',type:'article'},
+      {title:'Recommended Book',description:`"The Practitioner's Guide to ${topic}" — a comprehensive reference for real-world application with case studies.`,type:'book'},
+      {title:'Video Tutorial Series',description:'A structured playlist covering all key concepts from beginner to advanced, with hands-on demonstrations.',type:'video'},
+      {title:tools?tools.split(',')[0].trim()+' — Getting Started':'Key Tool Quickstart',description:'Official reference documentation, community forum, and beginner tutorials for the main tool covered.',type:'tool'},
+      {title:'Community & Practice Forum',description:'Join the active community to ask questions, share your work, access templates, and stay updated on best practices.',type:'article'}
+    ]
+  };
+}
+
+// ── TEMPLATES ────────────────────────────────────────────────
+const tmpls=[
+  {icon:'🤖',name:'Introduction to AI',desc:'Concepts, use cases, tools and hands-on exercises for non-technical teams.',tag:'Technology'},
+  {icon:'📊',name:'Data Analysis with Excel',desc:'Pivot tables, charts, formulas and data storytelling.',tag:'Analytics'},
+  {icon:'👥',name:'Leadership & Management',desc:'Core leadership skills, team management and communication.',tag:'HR'},
+  {icon:'🎯',name:'Sales Techniques',desc:'Prospecting, objection handling, closing and CRM.',tag:'Sales'},
+  {icon:'🔒',name:'Cybersecurity Basics',desc:'Phishing, password hygiene, secure remote work.',tag:'IT'},
+  {icon:'💬',name:'Effective Communication',desc:'Presentation, writing, and stakeholder management.',tag:'Soft Skills'},
+  {icon:'📋',name:'Project Management',desc:'Agile, Scrum, planning and risk management.',tag:'Operations'},
+  {icon:'🌿',name:'Sustainability & CSR',desc:'ESG frameworks, environmental impact and reporting.',tag:'Strategy'},
+  {icon:'🧘',name:'Wellbeing at Work',desc:'Stress management, work-life balance, mental health.',tag:'HR'}
+];
+document.addEventListener('DOMContentLoaded',()=>{
+  const g=document.getElementById('tgrid');
+  if(g)g.innerHTML=tmpls.map(t=>`
+    <div class="tcard" onclick="loadTmpl('${t.name}')">
+      <div class="ticon">${t.icon}</div>
+      <div class="tname">${t.name}</div>
+      <div class="tdesc">${t.desc}</div>
+      <span class="ttag">${t.tag}</span>
+    </div>`).join('');
+});
+function loadTmpl(n){document.getElementById('topic').value=n;sv('gen');}
+</script>
+</body>
+</html>
